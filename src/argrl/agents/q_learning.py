@@ -1,4 +1,9 @@
-"""Tabular epsilon-greedy Q-learning. This is the the no-shaping baseline that ArgRS will extend"""
+"""Tabular epsilon-greedy Q-learning. This is the the no-shaping baseline that ArgRS will extend
+
+References:
+- Q-learning update rule: Sutton & Barto (2018), Reinforcement Learning: An Introduction, 2nd ed., Sec. 6.5, Eq. 6.8.
+- Shaping term added to the reward, F = gamma*Phi(s') - Phi(s): Ng, Harada & Russell (1999), ICML.
+"""
 
 from __future__ import annotations
 from collections import defaultdict
@@ -39,7 +44,7 @@ class QLearningAgent:
         q = self.q[state]
         return int(self.rng.choice(np.flatnonzero(q == q.max())))
 
-    # One Q-learning update
+    # One Q-learning update (Sutton & Barto 2018, Eq. 6.8). `shaping` is where F plugs in (Ng et al. 1999).
     def update(
         self,
         s: Hashable,

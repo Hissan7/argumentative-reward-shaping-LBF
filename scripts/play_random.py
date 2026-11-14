@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 import time
 import gymnasium as gym
-import lbforaging  
+import lbforaging  # noqa: F401  (importing registers the Foraging-* env IDs)
 from lbforaging.foraging import ForagingEnv
 
 # a 5x5 grid with 1 agent and 1 food item for first tabular Q-learning baseline

@@ -1,4 +1,9 @@
-"""Single-agent wrapper around lbforaging"""
+"""Single-agent wrapper around lbforaging
+
+References:
+- Level-Based Foraging environment: Christianos, Schäfer & Albrecht (2020), NeurIPS; Papoudakis et al. (2021), NeurIPS Datasets & Benchmarks.
+- Time limit treated as truncation, not a terminal state: Pardo et al. (2018), Time Limits in Reinforcement Learning, ICML.
+"""
 
 from __future__ import annotations
 import numpy as np
@@ -48,6 +53,7 @@ class LBFEnv:
     # returns : state, reward, terminated, truncated, info
     def step(self, action: int) -> tuple[State, float, bool, bool, dict]:
         obs, rewards, _done, _truncated, _ = self._env.step([action])
+        # lbforaging 2.0.0 reports the time limit as done=True, so we ignore its flags and work them out here
         terminated = bool(self._env.field.sum() == 0)
         truncated = not terminated and self._env.current_step >= self.max_episode_steps
         reward = float(rewards[0])
