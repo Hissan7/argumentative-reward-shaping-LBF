@@ -33,3 +33,7 @@ results/raw/
 *.synctex.gz
 *.out
 *.toc
+
+# local-only notes (never committed)
+docs/
+understanding/
