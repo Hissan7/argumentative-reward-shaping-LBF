@@ -34,6 +34,7 @@ results/raw/
 *.out
 *.toc
 
-# local-only notes (never committed)
+# local only notes 
 docs/
 understanding/
+pictures/
