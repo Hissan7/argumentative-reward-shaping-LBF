@@ -56,3 +56,18 @@ def test_state_is_hashable_and_deterministic():
     assert a == b
     assert all(isinstance(x, int) for x in a[0]) and len(a[0]) == 6
     assert len({hash(s) for s in a}) > 1
+
+
+# regression test for D21: the start state depends on the seed only, not on the previous episode
+def test_same_seed_same_start_regardless_of_history():
+    eval_seeds = range(1_000_000, 1_000_020)
+    fresh = [LBFEnv().reset(seed=s)[0] for s in eval_seeds]
+    env, rng = LBFEnv(), np.random.default_rng(0)
+    for prior in range(200):
+        env.reset(seed=prior)
+        for _ in range(int(rng.integers(1, 50))):  # end the previous episode somewhere different each time
+            _, _, terminated, truncated, _ = env.step(int(rng.integers(6)))
+            if terminated or truncated:
+                break
+        i = prior % len(fresh)
+        assert env.reset(seed=eval_seeds[i])[0] == fresh[i]
