@@ -1,4 +1,4 @@
-"""plot the learning curves (Q-learning vs random) from results/raw."""
+"""plot the learning curves (Q-learning vs random, plus the heuristic if it has runs) from results/raw."""
 
 from __future__ import annotations
 import argparse
@@ -9,7 +9,7 @@ import pandas as pd
 from scipy import stats
 
 RESULTS = Path("results/raw")
-BLUE, ORANGE = "#2a78d6", "#eb6834" # colours
+BLUE, ORANGE, GREY = "#2a78d6", "#eb6834", "#555555" # colours
 
 
 def latest_runs(exp: str) -> list[Path]:
@@ -42,18 +42,22 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--q-exp", default="baseline_5x5")
     parser.add_argument("--random-exp", default="random_5x5")
+    parser.add_argument("--heuristic-exp", default="heuristic_5x5")
     parser.add_argument("--window", type=int, default=50)
     parser.add_argument("--out", type=Path, default=Path("results/figures/baseline_5x5_learning_curve"))
     args = parser.parse_args()
 
     q_runs, r_runs = latest_runs(args.q_exp), latest_runs(args.random_exp)
     n_q, n_r = len(q_runs), len(r_runs)
+    h_runs = latest_runs(args.heuristic_exp) if (RESULTS / args.heuristic_exp).exists() else []
 
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), constrained_layout=True)
     for ax, col, ylabel in [(axes[0], "length", "Episode length (steps)"),(axes[1], "env_return", "Env-only return"),]:
         band(ax,*load(q_runs, "metrics.csv", col, args.window),BLUE,"Q-learning (training, ε-greedy)",)
         band(ax,*load(q_runs, "eval_metrics.csv", col),BLUE,"Q-learning (greedy eval, ε = 0)",ls="--",)
         band(ax, *load(r_runs, "metrics.csv", col, args.window), ORANGE, "Random agent")
+        if h_runs:
+            band(ax, *load(h_runs, "metrics.csv", col, args.window), GREY, "Heuristic (nearest food)", ls=":")
         ax.set_xlabel("Training episode")
         ax.set_ylabel(ylabel)
         ax.grid(alpha=0.25, lw=0.6)
@@ -62,8 +66,9 @@ def main() -> None:
     axes[0].set_ylim(0, None)
     axes[1].set_ylim(0, 1.05)
     axes[0].legend(frameon=False, loc="center right")
-    fig.suptitle(f"1-player 5×5 LBF, 1 food: tabular Q-learning vs random  "
-        f"(n = {n_q} / {n_r} seeds; shaded = 95% CI, t-dist.; "
+    n_h = f" / {len(h_runs)}" if h_runs else ""
+    fig.suptitle(f"1-player 5×5 LBF, 1 food: tabular Q-learning vs random{' vs heuristic' if h_runs else ''}\n"
+        f"(n = {n_q} / {n_r}{n_h} seeds; shaded = 95% CI, t-dist.; "
         f"training curves = {args.window}-episode rolling mean)",
         fontsize=9.5,)
 

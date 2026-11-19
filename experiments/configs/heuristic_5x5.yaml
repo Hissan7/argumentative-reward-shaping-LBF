@@ -1,0 +1,19 @@
+# Week-2 reference: hand-coded heuristic (nearest cell next to the food, then LOAD), 1 player, 5x5, 1 food.
+# Every parameter is written out so the saved config.yaml is fully resolved.
+name: heuristic_5x5
+env:
+  field_size: 5
+  max_num_food: 1
+  min_player_level: 1
+  max_player_level: 2
+  sight: 5
+  max_episode_steps: 50
+agent:
+  type: heuristic
+  tie_break: rng     # equally short moves: random choice from the agent's own RNG (D16)
+n_episodes: 2000
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+eval:
+  every: 50          # greedy evaluation every 50 training episodes (and before training)
+  episodes: 20       # on the fixed env seeds seed_start .. seed_start + 19, shared by all runs
+  seed_start: 1000000
