@@ -1,17 +1,6 @@
 import numpy as np
+from argrl.agents.heuristic_agent import LOAD, NONE, walk_to_food
 from argrl.envs.lbf_env import LBFEnv
-
-NONE, NORTH, SOUTH, WEST, EAST, LOAD = range(6)
-
-# step toward the food (rows first) and LOAD once adjacent
-def walk_to_food(state: tuple[int, ...]) -> int:
-    fr, fc, _, ar, ac, _ = state
-    dr, dc = fr - ar, fc - ac
-    if abs(dr) + abs(dc) == 1:
-        return LOAD
-    if dr:
-        return SOUTH if dr > 0 else NORTH
-    return EAST if dc > 0 else WEST
 
 
 def test_truncation_flags():
