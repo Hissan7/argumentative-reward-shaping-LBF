@@ -1,4 +1,4 @@
-"""Hand-coded heuristic: walk to the nearest cell next to the food, then LOAD."""
+"""Hand-coded heuristic. Walk to the nearest cell next to the food then LOAD."""
 
 from __future__ import annotations
 import numpy as np
@@ -8,7 +8,7 @@ NONE, NORTH, SOUTH, WEST, EAST, LOAD = range(6)
 MOVES = {NORTH: (-1, 0), SOUTH: (1, 0), WEST: (0, -1), EAST: (0, 1)}
 
 
-# TODO: assumes the 1-food encoding; with more food or players, "nearest loadable" needs the levels
+# assumes the 1-food encoding
 def good_actions(state: State) -> list[int]:
     fr, fc, _, ar, ac, _ = state
     targets = [(fr + dr, fc + dc) for dr, dc in MOVES.values()]
@@ -27,7 +27,7 @@ def good_actions(state: State) -> list[int]:
     ]
 
 
-# one action from good_actions: the first (rows before columns) or a random one
+# one action from good_actions
 def walk_to_food(state: State, rng: np.random.Generator | None = None) -> int:
     actions = good_actions(state)
     return actions[0] if rng is None else int(rng.choice(actions))
