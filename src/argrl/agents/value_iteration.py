@@ -1,7 +1,4 @@
-"""Exact optimal values and policy for 1-player, 1-food LBF, by value iteration.
-
-The model is written analytically from the lbforaging 2.0.0 source and checked against
-the real env in tests/test_value_iteration.py. The time limit is ignored (D15).
+"""Exact optimal values and policy for 1-player 1-food LBF by value iteration.
 
 References:
 - Value iteration: Sutton & Barto (2018), Reinforcement Learning: An Introduction, 2nd ed., Sec. 4.4.
@@ -15,7 +12,6 @@ NONE, NORTH, SOUTH, WEST, EAST, LOAD = range(6)
 MOVES = {NORTH: (-1, 0), SOUTH: (1, 0), WEST: (0, -1), EAST: (0, 1)}
 
 
-# every non-terminal state (D12); in-episode states are a subset of the reset states
 def enumerate_states(field_size: int = 5, max_player_level: int = 2) -> list[State]:
     inner = range(1, field_size - 1)  # food never spawns on the border
     return [
@@ -41,24 +37,14 @@ def transition(s: State, a: int, field_size: int = 5) -> tuple[State, float, boo
         r, c = ar + MOVES[a][0], ac + MOVES[a][1]
         if 0 <= r < field_size and 0 <= c < field_size and (r, c) != (fr, fc):
             return (fr, fc, fl, r, c, al), 0.0, False
-    return s, 0.0, False  # NONE, or a blocked move (lbforaging turns it into NONE)
+    return s, 0.0, False  # NONE, or a blocked move 
 
 
-def value_iteration(
-    states: list[State],
-    n_actions: int = 6,
-    gamma: float = 0.99,
-    tol: float = 1e-10,
-    max_iter: int = 10_000,
-    field_size: int = 5,
-) -> tuple[dict[State, float], dict[State, np.ndarray]]:
+def value_iteration(states: list[State],n_actions: int = 6,gamma: float = 0.99,tol: float = 1e-10,max_iter: int = 10_000,field_size: int = 5,) -> tuple[dict[State, float], dict[State, np.ndarray]]:
     model = {s: [transition(s, a, field_size) for a in range(n_actions)] for s in states}
     V = dict.fromkeys(states, 0.0)
     for _ in range(max_iter):
-        Q = {
-            s: np.array([r + (0.0 if term else gamma * V[s2]) for s2, r, term in model[s]])
-            for s in states
-        }
+        Q = {s: np.array([r + (0.0 if term else gamma * V[s2]) for s2, r, term in model[s]]) for s in states}
         V_new = {s: float(q.max()) for s, q in Q.items()}
         residual = max(abs(V_new[s] - V[s]) for s in states)
         V = V_new
@@ -72,6 +58,5 @@ def optimal_actions(Q_star: dict[State, np.ndarray], s: State, atol: float = 1e-
     return set(np.flatnonzero(q >= q.max() - atol).tolist())
 
 
-# k such that V*(s) = gamma^(k-1): the number of steps to collect the food, LOAD included
 def optimal_steps(V_star: dict[State, float], s: State, gamma: float = 0.99) -> int:
     return 1 + round(np.log(V_star[s]) / np.log(gamma))
