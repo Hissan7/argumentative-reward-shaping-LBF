@@ -1,13 +1,6 @@
 import numpy as np
 import pytest
-from argrl.agents.value_iteration import (
-    LOAD,
-    enumerate_states,
-    optimal_actions,
-    optimal_steps,
-    transition,
-    value_iteration,
-)
+from argrl.agents.value_iteration import (LOAD,enumerate_states,optimal_actions,optimal_steps,transition,value_iteration,)
 from argrl.agents.heuristic_agent import walk_to_food
 from argrl.envs.lbf_env import LBFEnv
 from argrl.envs.state_space import count_states
@@ -55,9 +48,9 @@ def test_bellman_residual(solved):
 @pytest.mark.parametrize(
     ("state", "k"),
     [
-        ((2, 2, 1, 2, 1, 1), 1),  # next to the food: LOAD now
+        ((2, 2, 1, 2, 1, 1), 1),  
         ((2, 2, 1, 2, 0, 1), 2),
-        ((2, 2, 1, 0, 0, 2), 4),  # corner: 3 moves to (1, 2) or (2, 1), then LOAD
+        ((2, 2, 1, 0, 0, 2), 4),  
         ((1, 1, 2, 4, 4, 2), 6),
     ],
 )
@@ -68,7 +61,7 @@ def test_value_matches_distance(solved, state, k):
     assert (LOAD in optimal_actions(Q, state)) == (k == 1)
 
 
-# a fresh env per seed: lbforaging's reset depends on where the last episode ended (D21)
+# a fresh env per seed
 def test_eval_seed_optimum_matches_heuristic(solved):
     _, V, _ = solved
     for seed in range(1_000_000, 1_000_020):
@@ -77,7 +70,7 @@ def test_eval_seed_optimum_matches_heuristic(solved):
         k, steps = optimal_steps(V, s, GAMMA), 0
         while True:
             s, _, terminated, truncated, _ = env.step(walk_to_food(s))
-            steps += 1
+            steps = steps + 1
             if terminated or truncated:
                 break
         assert terminated and steps == k
