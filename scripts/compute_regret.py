@@ -1,7 +1,4 @@
-"""Regret of a Q-learning experiment against value iteration (D19).
-
-Run: PYTHONPATH=src uv run python scripts/compute_regret.py --exp baseline_5x5
-"""
+"""Regret of a Q-learning experiment against value iteration"""
 
 from __future__ import annotations
 import argparse
@@ -21,7 +18,7 @@ def state_optimality(q_file: Path, states, Q_star) -> tuple[float, int]:
     learned = {tuple(int(x) for x in s): q for s, q in zip(data["states"], data["q"])}
     n_opt = 0
     for s in states:
-        q = learned.get(s, np.zeros(6))  # unvisited: all-zero row, as in the agent
+        q = learned.get(s, np.zeros(6))  # unvisited. all-zero row as in the agent
         n_opt += set(np.flatnonzero(q == q.max()).tolist()) <= optimal_actions(Q_star, s)
     return n_opt / len(states), sum(s not in learned for s in states)
 
@@ -38,7 +35,7 @@ def main() -> None:
     V, Q = value_iteration(states, gamma=gamma, field_size=cfg["env"]["field_size"])
 
     ev = cfg["eval"]
-    # a fresh env per seed gives each seed's history-free start state (D21)
+    # a fresh env per seed gives each seed's history-free start state 
     starts = [LBFEnv(**cfg["env"]).reset(seed=s)[0] for s in range(ev["seed_start"], ev["seed_start"] + ev["episodes"])]
     opt_len = float(np.mean([optimal_steps(V, s, gamma) for s in starts]))
 
