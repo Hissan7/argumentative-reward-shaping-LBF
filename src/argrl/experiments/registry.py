@@ -1,4 +1,4 @@
-"""Agent type name (the `agent.type` in a config) -> agent class."""
+"""Agent type name mapped to agent class."""
 
 from argrl.agents.heuristic_agent import HeuristicAgent
 from argrl.agents.q_learning import QLearningAgent

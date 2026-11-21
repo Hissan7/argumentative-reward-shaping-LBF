@@ -1,4 +1,4 @@
-"""Experiment configs: YAML <-> dataclasses. Unknown or missing keys raise an error."""
+"""Experiment configs. Unknown or missing keys raise an error."""
 
 from __future__ import annotations
 import inspect
@@ -60,7 +60,7 @@ def from_dict(d: dict) -> ExperimentConfig:
 
 def to_dict(cfg: ExperimentConfig) -> dict:
     d = asdict(cfg)
-    d["agent"] = {"type": cfg.agent.type, **cfg.agent.params}  # same flat layout as the YAML
+    d["agent"] = {"type": cfg.agent.type, **cfg.agent.params}  
     return d
 
 

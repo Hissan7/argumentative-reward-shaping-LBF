@@ -1,5 +1,3 @@
-"""CLI: PYTHONPATH=src uv run python -m argrl.experiments.run --config <yaml>"""
-
 from __future__ import annotations
 import argparse
 from pathlib import Path

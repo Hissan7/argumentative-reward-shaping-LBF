@@ -1,4 +1,4 @@
-"""Train and evaluate one agent over all seeds of a config, and write the run folders."""
+"""train and evaluate one agent over all seeds of a config and write the run folders."""
 
 from __future__ import annotations
 import json
@@ -25,7 +25,7 @@ def run_episode(env: LBFEnv, agent, seed: int | None = None, learn: bool = True)
         a = agent.select_action(s, greedy=not learn)
         s_next, r, terminated, truncated, info = env.step(a)
         if learn:
-            agent.update(s, a, r, s_next, terminated)  # truncation still bootstraps (D4)
+            agent.update(s, a, r, s_next, terminated)  # truncation still bootstraps
         env_return = env_return + info["env_reward"]
         length = length + 1
         s = s_next
@@ -50,7 +50,7 @@ def git_state() -> tuple[str, bool]:
 
 # returns training metrics, eval metrics, extra meta fields and the trained agent
 def train_seed(cfg: ExperimentConfig, seed: int) -> tuple[pd.DataFrame, pd.DataFrame, dict, object]:
-    # separate env and agent seeds so their random streams never coincide (D10)
+    # separate env and agent seeds so their random streams never coincide 
     env_seed, agent_seed = (int(x) for x in np.random.SeedSequence(seed).generate_state(2))
     env, eval_env = LBFEnv(**asdict(cfg.env)), LBFEnv(**asdict(cfg.env))
     agent = AGENTS[cfg.agent.type](n_actions=env.n_actions, seed=agent_seed, **cfg.agent.params)
@@ -88,7 +88,7 @@ def run_experiment(cfg: ExperimentConfig, config_file: str, results: Path = RESU
     run_dirs = []
     for seed in cfg.seeds:
         run_dir = results / cfg.name / f"{timestamp}_{seed}"
-        run_dir.mkdir(parents=True, exist_ok=False)  # never overwrite results
+        run_dir.mkdir(parents=True, exist_ok=False)  # neverr overwrite results
         t0 = time.perf_counter()
         metrics, eval_metrics, extra, agent = train_seed(cfg, seed)
         meta = {
