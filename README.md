@@ -22,18 +22,4 @@ PYTHONPATH=src uv run python scripts/compute_regret.py --exp baseline_5x5       
 uv run python scripts/play_random.py                                                 # watch random agents play
 ```
 
-`PYTHONPATH=src` works around a macOS issue where the editable install is ignored.
 
-## Layout
-
-```
-src/argrl/envs/          LBF wrapper (seeding, truncation fix), state-space count
-src/argrl/agents/        random, heuristic, Q-learning, value iteration
-src/argrl/experiments/   YAML config, runner, CLI
-experiments/configs/     one YAML file per experiment
-scripts/                 plotting, regret, demo
-tests/                   pytest suite
-results/raw/             run outputs (not in git)
-results/figures/         figures
-results/tables/          tables
-```
