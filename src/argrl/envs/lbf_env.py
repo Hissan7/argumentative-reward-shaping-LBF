@@ -46,6 +46,9 @@ class LBFEnv:
     
     # start episode
     def reset(self, seed: int | None = None) -> tuple[State, dict]:
+        # lbforaging's spawn treats the last episode's end position as occupied, so clear it (D21)
+        for p in self._env.players:
+            p.position = None
         obs, _ = self._env.reset(seed=seed)
         self._n_food_spawned = int(np.count_nonzero(self._env.field))
         return encode_state(obs[0]), self._info(0.0)
