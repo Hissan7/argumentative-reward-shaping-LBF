@@ -5,9 +5,9 @@ Attacks as in Dung (1995)
 Supports and base scores as in Rago, Čyras & Toni (2016).
 """
 
+from __future__ import annotations
 import heapq
 from dataclasses import dataclass
-from __future__ import annotations
 from types import MappingProxyType
 from collections.abc import Iterable, Mapping
 
